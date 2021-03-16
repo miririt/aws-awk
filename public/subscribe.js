@@ -16,14 +16,14 @@ window.addEventListener('load', () => {
   const unsubscribeBtn = document.querySelector('#unsubscribe');
 
   subscribeBtn.addEventListener('click', () => {
-    fetchUrl('/subscribe')
+    sendForm('/subscribe')
       .then(() => {
         alert('구독 성공');
       });
   });
 
   unsubscribeBtn.addEventListener('click', () => {
-    fetchUrl('/unsubscribe')
+    sendForm('/unsubscribe')
       .then(() => {
         alert('구독 해지 성공');
       });
