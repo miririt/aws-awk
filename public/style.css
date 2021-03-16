@@ -4,6 +4,16 @@ body {
     display: flex;
 }
 
+a {
+    color: crimson;
+    font-weight: bold;
+}
+
+div#explain {
+    margin: auto;
+    margin-left: 0;
+}
+
 form {
     display: flex;
     flex-direction: column;
