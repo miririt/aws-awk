@@ -28,16 +28,42 @@ class Arcalive {
     .then(() => {
       this._lastArticleId = -1;
       this._lastCommentId = -1;
-      this._checkedAggro = [];
+      this._lastAuditId = -1;
       this._checkedQuarantine = [];
   
       this._checkArticles();
+      this._checkAudit();
     });
   }
 
   static async checkPermission(boardId) {
     return await this._session._fetch(`https://arca.live/b/${boardId}`)
       .then(dom => dom.querySelector('.batch-delete-form') !== null);
+  }
+
+  async _checkAudit() {
+    const auditPage = await this._session.fetch(`https://arca.live/b/${this._boardId}/audit`);
+    const auditLogs = auditPage.querySelectorAll('board-audit-list');
+    auditLogs.forEach(log => {
+      if(!log.id.match(/^audit-/)) return;
+      const [ _, auditId ] = log.id.match(/-(\d+)/);
+
+      if(auditId > this._lastAuditId) {
+        const auditContent = log.querySelector('i');
+
+        this._lastAuditId = auditId;
+
+        if(auditContent.innerText.match(/게시물 편집/)) {
+          const articleLink = auditContent.querySelector('a');
+          const [ articleId ] = articleLink.getAttribute('href').match(/\d+$/);
+
+          this._board.deleteArticle(~~articleId);
+          this._dispatch('delete', [ quarantineArticle ]);
+        }
+      }
+    });
+
+    this._timeoutHandle = setTimeout(this._checkArticles.bind(this), 10000);
   }
 
   async _checkArticles() {
