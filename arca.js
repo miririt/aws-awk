@@ -42,26 +42,33 @@ class Arcalive {
   }
 
   async _checkAudit() {
-    const auditPage = await this._session.fetch(`https://arca.live/b/${this._boardId}/audit`);
-    const auditLogs = auditPage.querySelectorAll('board-audit-list');
-    auditLogs.forEach(log => {
-      if(!log.id.match(/^audit-/)) return;
-      const [ _, auditId ] = log.id.match(/-(\d+)/);
+    try {
+      const auditPage = await this._session._fetch(`https://arca.live/b/${this._boardId}/audit`);
+      const auditLogs = auditPage.querySelectorAll('board-audit-list');
+      auditLogs.forEach(log => {
+        if(!log.id.match(/^audit-/)) return;
+        const [ _, auditId ] = log.id.match(/-(\d+)/);
 
-      if(auditId > this._lastAuditId) {
-        const auditContent = log.querySelector('i');
+        if(auditId > this._lastAuditId) {
+          const auditContent = log.querySelector('i');
 
-        this._lastAuditId = auditId;
+          this._lastAuditId = auditId;
 
-        if(auditContent.innerText.match(/게시물 편집/)) {
-          const articleLink = auditContent.querySelector('a');
-          const [ articleId ] = articleLink.getAttribute('href').match(/\d+$/);
+          if(auditContent.innerText.match(/게시물 편집/)) {
+            const articleLink = auditContent.querySelector('a');
+            const [ articleId ] = articleLink.getAttribute('href').match(/\d+$/);
 
-          this._board.deleteArticle(~~articleId);
-          this._dispatch('delete', [ quarantineArticle ]);
+            const targetArticle = this._board.getArticle(~~articleId);
+            const articleData = await targetArticle.read({ noCache: true, withComments: false });
+
+            if(Date.now() - articleData.time.getTime() > 1000 * 86400 * 7) {
+              targetArticle.delete();
+              this._dispatch('delete', [ quarantineArticle ]);
+            }
+          }
         }
-      }
-    });
+      });
+    } catch(err) { }
 
     this._timeoutHandle = setTimeout(this._checkArticles.bind(this), 10000);
   }
@@ -90,7 +97,7 @@ class Arcalive {
                 article.delete();
                 this._dispatch('delete', [ article ]);
               } else if(rule.type === 'quarantine') {
-                this.quarantineArticle(article);
+                this._quarantineArticle(article);
                 this._dispatch('quarantine', [ article ]);
               } else if(rule.type === 'block') {
                 article.blockUser(rule.duration);

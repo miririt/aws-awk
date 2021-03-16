@@ -1,4 +1,5 @@
 const Arcalive = require('./arca');
+const settings = require('./settings');
 const express = require('express');
 
 class Worker {
@@ -15,9 +16,9 @@ class Worker {
       const board = await this._addBoard(req.body.boardId);
       if(board === null) {
         if(this._sessions[req.body.boardId]) {
-          res.end(400);
+          res.status(400).end();
         } else {
-          res.end(401);
+          res.status(401).end();
         }
         return;
       } else {
@@ -25,21 +26,28 @@ class Worker {
           const count = req.body.quarantineCount > 0 ? -~~req.body.quarantineCount : ~~req.body.quarantineCount;
           board.setQuarantineCount(count);
         }
-        board.redact({
-          pattern: new RegExp(req.body.deleteRule),
-          type: 'delete'
-        });
 
-        board.redact({
-          pattern: new RegExp(req.body.quarantineRule),
-          type: 'quarantine'
-        });
+        if(req.body.deleteRule) {
+          board.redact({
+            pattern: new RegExp(req.body.deleteRule),
+            type: 'delete'
+          });
+        }
 
-        board.redact({
-          pattern: new RegExp(req.body.blockRule),
-          type: 'block',
-          duration: 31536000
-        });
+        if(req.body.quarantineRule) {
+          board.redact({
+            pattern: new RegExp(req.body.quarantineRule),
+            type: 'quarantine'
+          });
+        }
+
+        if(req.body.blockRule) {
+          board.redact({
+            pattern: new RegExp(req.body.blockRule),
+            type: 'block',
+            duration: 31536000
+          });
+        }
       }
       res.send('200 OK');
     });
@@ -47,10 +55,10 @@ class Worker {
     this._expressRouter.post('/unsubscribe', async (req, res, next) => {
       const hasPermission = Arcalive.checkPermission(req.body.boardId);
       if(hasPermission) {
-        res.end(400);
+        res.status(400).end();
         return;
       } else if(this._sessions[req.body.boardId]){
-        res.end(400);
+        res.status(400).end();
         return;
       }
 
@@ -82,7 +90,7 @@ class Worker {
    */
   static async _addBoard(boardId) {
 
-    const checkResult = !this._sessions[boardId] && Arcalive.checkPermission(boardId);
+    const checkResult = !this._sessions[boardId] && await Arcalive.checkPermission(boardId);
     
     if(!checkResult) return null;
 
