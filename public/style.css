@@ -1,0 +1,49 @@
+
+html, body { height: 100%; margin: 0; }
+body {
+    display: flex;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    border: 2px solid black;
+    border-radius: 12px;
+    padding: 1em;
+    margin: auto;
+}
+
+form * {
+    margin: 0.5em;
+    border-radius: 12px;
+}
+
+form div.redaction-rule {
+    border: 2px dashed black;
+    padding: 0.5em;
+    text-align: center;
+}
+
+input {
+    border: none;
+    background: lightgrey;
+    font-weight: bold;
+    padding: 1em;
+    color: black;
+
+    width: 30em;
+}
+
+input[type="button"] {
+    border: 2px solid black;
+    background: white;
+    transition: 500ms;
+}
+
+input[type="button"]:hover {
+    background: black;
+    color: white;
+}

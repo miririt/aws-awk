@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcalive AWK</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+    <form id="subscribe">
+        <h1 class="title">Arcalive AWK</h1>
+        <input name="boardId" type="text" placeholder="게시판 ID(ex. breaking / counterside / ...)"><br>
+        <input name="quarantineCount" type="number" placeholder="게시글 격리 기준 비추천 수(0일 경우 해제)"><br>
+
+        <span style="font-weight: bold;">이하 규칙에는 정규식 허용</span>
+        <div class="redaction-rule">
+            <h3>삭제 규칙</h3>
+            <input name="deleteRule" type="text" placeholder="게시글 제목 및 내용 규칙"><br>
+        </div>
+
+        <div class="redaction-rule">
+            <h3>격리 규칙</h3>
+            <input name="quarantineRule" type="text" placeholder="게시글 제목 및 내용 규칙"><br>
+        </div>
+        
+        <div class="redaction-rule">
+            <h3>차단(1년) 규칙</h3>
+            <input name="blockRule" type="text" placeholder="게시글 제목 및 내용 규칙"><br>
+        </div>
+        <br>
+        <input id="subscribe" type="button" value="등록"><br>
+        <input id="unsubscribe" type="button" value="삭제">
+    </form>
+
+    <script type="text/javascript" src="subscribe.js"></script>
+</body>
+</html>
