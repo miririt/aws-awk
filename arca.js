@@ -32,7 +32,7 @@ class Arcalive {
       this._checkedQuarantine = [];
   
       this._checkArticles();
-      this._checkAudit();
+      //this._checkAudit();
     });
   }
 
@@ -63,7 +63,7 @@ class Arcalive {
 
             if(Date.now() - articleData.time.getTime() > 1000 * 86400 * 7) {
               targetArticle.delete();
-              this._dispatch('delete', [ quarantineArticle ]);
+              this._dispatch('delete', [ targetArticle ]);
             }
           }
         }
