@@ -45,7 +45,7 @@ class Arcalive {
     try {
       const auditPage = await this._session._fetch(`https://arca.live/b/${this._boardId}/audit`);
       const auditLogs = auditPage.querySelectorAll('board-audit-list');
-      auditLogs.forEach(log => {
+      auditLogs.forEach(async (log) => {
         if(!log.id.match(/^audit-/)) return;
         const [ _, auditId ] = log.id.match(/-(\d+)/);
 
