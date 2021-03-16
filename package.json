@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "arcalive": "^0.1.2",
+    "arcalive": "^0.1.4",
     "discord.js": "^12.5.1",
     "express": "^4.17.1"
   }
